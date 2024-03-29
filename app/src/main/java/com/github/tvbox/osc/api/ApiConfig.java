@@ -80,141 +80,141 @@ public class ApiConfig {
 
     public static ApiConfig get() {
         if (instance == null) {
-            synchronized (ApiConfig.class) {
-                if (instance == null) {
-                    instance = new ApiConfig();
+            已同步 (ApiConfig.班级) {
+                如果 (实例==无效的) {
+实例=新的ApiConfig();
                 }
             }
         }
-        return instance;
+        返回实例；
     }
 
-    public static String FindResult(String json, String configKey) {
-        String content = json;
-        try {
-            if (AES.isJson(content)) return content;
-            Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
-            Matcher matcher = pattern.matcher(content);
-            if(matcher.find()){
-                content=content.substring(content.indexOf(matcher.group()) + 10);
-                content = new String(Base64.decode(content, Base64.DEFAULT));
+    公共 静态的线FindResult(线JSON，字符串configKey) {
+线内容=json；
+        尝试 {
+            如果 (AES.isJson(内容)) 返回内容；
+模式模式=图案。编译("[A-Za-z0]{8}\\*\\*");
+匹配器匹配器=模式。匹配器(内容);
+            如果(火柴人。找到()){
+content=content。子字串(内容。indexOf(火柴人。组())+10);
+内容=新的线(base64.解码(内容，Base64.DEFAULT));
             }
-            if (content.startsWith("2423")) {
-                String data = content.substring(content.indexOf("2324") + 4, content.length() - 26);
-                content = new String(AES.toBytes(content)).toLowerCase();
-                String key = AES.rightPadding(content.substring(content.indexOf("$#") + 2, content.indexOf("#$")), "0", 16);
-                String iv = AES.rightPadding(content.substring(content.length() - 13), "0", 16);
-                json = AES.CBC(data, key, iv);
-            }else if (configKey !=null && !AES.isJson(content)) {
-                json = AES.ECB(content, configKey);
+            如果 (内容。startswith("2423")) {
+线数据=内容。子字串(内容。indexOf("2324")+4，内容。长度()-26);
+内容=新的线(AES.toBytes(内容)).toLowerCase();
+线钥匙=AES。rightPadding(内容。子字串(内容。indexOf("$#")+2，内容。indexOf("#$")),"0",16);
+线IV=AES。rightPadding(内容。子字串(内容。长度()-13),"0",16);
+JSON=AES。CBC(数据、密钥、iv);
+            }其他 如果 (configKey！=无效的&&！AES。isJson(内容)) {
+JSON=AES。欧洲央行(内容，configKey);
             }
-            else{
-                json = content;
+            其他{
+JSON=内容；
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } 赶上 (例外e) {
+e。printStackTrace();
         }
-        return json;
+        返回JSON；
     }
 
-    private static byte[] getImgJar(String body){
-        Pattern pattern = Pattern.compile("[A-Za-z0]{8}\\*\\*");
-        Matcher matcher = pattern.matcher(body);
-        if(matcher.find()){
-            body = body.substring(body.indexOf(matcher.group()) + 10);
-            return Base64.decode(body, Base64.DEFAULT);
+    私人的 静态的字节[] getImgJar(线身体){
+模式模式=图案。编译("[A-Za-z0]{8}\\*\\*");
+匹配器匹配器=模式。匹配器(身体);
+        如果(火柴人。找到()){
+body=body。子字串(身体。indexOf(火柴人。组())+10);
+            返回base64.解码(阀体，Base64.DEFAULT);
         }
-        return "".getBytes();
+        返回 “”.GetBytes();
     }
 
-    public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        if (apiUrl.isEmpty()) {
-            callback.error("-1");
-            return;
+    公共 无效的 loadConfig(布尔型useCache，LoadConfigCallback回调，活动活动) {
+线apiUrl=Hawk。得到(HawkConfig.API_URL，"https://jihulab.com/mdxgh/mdxgh/-/raw/main/mdxgh.json");
+        如果 (apiUrl.isEmpty()) {
+回拨。误差("-1");
+            返回;
         }
-        File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
-        if (useCache && cache.exists()) {
-            try {
-                parseJson(apiUrl, cache);
-                callback.success();
-                return;
-            } catch (Throwable th) {
-                th.printStackTrace();
+文件缓存=新的文件(应用程序。getInstance().getFilesDir().getAbsolutePath()+"/"+MD5。编码(apiUrl));
+        如果 (useCache&&cache。存在()) {
+            尝试 {
+                parseJSON(apiUrl，缓存);
+回拨。成功();
+                返回;
+            } 赶上 (可投掷的th) {
+th.printStackTrace();
             }
         }
-        String TempKey = null, configUrl = "", pk = ";pk;";
-        if (apiUrl.contains(pk)) {
-            String[] a = apiUrl.split(pk);
-            TempKey = a[1];
-            if (apiUrl.startsWith("clan")){
-                configUrl = clanToAddress(a[0]);
-            }else if (apiUrl.startsWith("http")){
-                configUrl = a[0];
-            }else {
-                configUrl = "http://" + a[0];
+线TempKey=无效的,configUrl=“”,对决="；pk；";
+        如果 (apiUrl.包含(对决)) {
+线[] 一个=apiUrl。分离(对决);
+TempKey=a[1];
+            如果 (apiUrl.startswith("氏族")){
+configUrl=clanToAddress(一个[0]);
+            }其他 如果 (apiUrl.startswith("http")){
+configUrl=a[0];
+            }其他 {
+configUrl="http://"+a[0];
             }
-        } else if (apiUrl.startsWith("clan")) {
-            configUrl = clanToAddress(apiUrl);
-        } else if (!apiUrl.startsWith("http")) {
-            configUrl = "http://" + configUrl;
-        } else {
-            configUrl = apiUrl;
+        } 其他 如果 (apiUrl.startswith("氏族")) {
+configUrl=clanToAddress(apiUrl);
+        } 其他 如果 (！apiUrl.startswith("http")) {
+configUrl="http://"+configUrl；
+        } 其他 {
+configUrl=apiUrl；
         }
-        String configKey = TempKey;
-        OkGo.<String>get(configUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        try {
-                            String json = response.body();
-                            parseJson(apiUrl, json);
-                            try {
-                                File cacheDir = cache.getParentFile();
-                                if (!cacheDir.exists())
-                                    cacheDir.mkdirs();
-                                if (cache.exists())
-                                    cache.delete();
-                                FileOutputStream fos = new FileOutputStream(cache);
-                                fos.write(json.getBytes("UTF-8"));
-                                fos.flush();
-                                fos.close();
-                            } catch (Throwable th) {
-                                th.printStackTrace();
+线configKey=TempKey；
+OKGO。<字符串>得到(configUrl)
+.页眉("用户代理"，userAgent)
+.页眉("接受"，requestAccept)
+.执行(新的AbsCallback<String>() {
+@Override
+                    公共 无效的 onSuccess(响应<字符串>响应) {
+                        尝试 {
+线JSON=响应。身体();
+                            parseJSON(apiUrl，json);
+                            尝试 {
+文件CACHEEDIR=缓存。getParentFile();
+                                如果 (！cachedir.存在())
+CACHEEDIR。mkdirs();
+                                如果 (缓存。存在())
+缓存。删除();
+FileOutputStreamFOS=新的FileOutputStream(缓存);
+FOS.写(JSON.GetBytes("UTF-8"));
+FOS.冲洗();
+FOS.关闭();
+                            } 赶上 (可投掷的th) {
+th.printStackTrace();
                             }
-                            callback.success();
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                            callback.error("解析配置失败");
+回拨。成功();
+                        } 赶上 (可投掷的th) {
+th.printStackTrace();
+回拨。误差("解析配置失败");
                         }
                     }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        if (cache.exists()) {
-                            try {
-                                parseJson(apiUrl, cache);
-                                callback.success();
-                                return;
-                            } catch (Throwable th) {
-                                th.printStackTrace();
+@Override
+                    公共 无效的 onError(响应<字符串>响应) {
+                        超级.onError(响应);
+                        如果 (缓存。存在()) {
+                            尝试 {
+                                parseJSON(apiUrl，缓存);
+回拨。成功();
+                                返回;
+                            } 赶上 (可投掷的th) {
+th.printStackTrace();
                             }
                         }
-                        callback.error("拉取配置失败\n" + (response.getException() != null ? response.getException().getMessage() : ""));
+回拨。误差("拉取配置失败\n"+(响应。getException()!=无效的？响应。getException().getMessage():“”));
                     }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        if (response.body() == null) {
-                            result = "";
-                        } else {
-                            result = FindResult(response.body().string(), configKey);
+                    公共线convertResponse(okhttp3.Response响应) 抛出可投掷的{
+线结果=“”;
+                        如果 (响应。身体()==无效的) {
+结果=“”;
+                        } 其他 {
+结果=FindResult(响应。身体().线()，configKey);
                         }
 
-                        if (apiUrl.startsWith("clan")) {
+                        如果 (apiUrl.startswith("氏族")) {
                             result = clanContentFix(clanToAddress(apiUrl), result);
                         }
                         //假相對路徑
